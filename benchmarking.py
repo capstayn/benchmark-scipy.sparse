@@ -60,15 +60,24 @@ def get_paths():
     k1 = []
     k5 = []
     k10 = []
-    
+
     for (dirpath, dirnames, filenames) in os.walk("."):
         for filename in filenames:
             if filename.endswith('.mtx.gz') and dirpath == "./1k": 
                 k1.append(os.sep.join([dirpath, filename]))
-            if filename.endswith('.mtx.gz') and dirpath == "./5k": 
+            elif filename.endswith('.mtx.gz') and dirpath == "./5k": 
                 k5.append(os.sep.join([dirpath, filename]))
-            if filename.endswith('.mtx.gz') and dirpath == "./10k": 
+            elif filename.endswith('.mtx.gz') and dirpath == "./10k": 
                 k10.append(os.sep.join([dirpath, filename]))
+            elif filename.endswith('.mtx.gz'):
+                print('WARNING: all .mtx matrices should be in either of\
+                        {1k,5k,10k} folders')
+                print('Current working directory: {}'.format(os.getcwd()))
+                
+    # sort filenames alphabetically
+    k1.sort()
+    k5.sort()
+    k10.sort()
 
     paths.append(list(k1))
     paths.append(list(k5))
