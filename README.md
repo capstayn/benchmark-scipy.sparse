@@ -1,4 +1,4 @@
-# spsolve_benchmarking
+# benchmarking-scipy.sparse
 Benchmarking of spsolve function of scipy.sparse on linear algebra libraries used by scipy
 
 ## Some remarks on the sparse matrices used
@@ -34,4 +34,4 @@ Benchmarking of spsolve function of scipy.sparse on linear algebra libraries use
 
 The script requires two arguments, `-n <int>`, and `-r <int>`, which account for the
 number of executions to be run per test and the number of tests to repeat,
-respectively. Execute the script with `-h` option for more details
+respectively. Execute the script with `-h` option for more details.
