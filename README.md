@@ -1,5 +1,5 @@
 # spsolve_benchmarking
-Benchmarking of spsolve function of scipy on linear algebra libraries used by scipy
+Benchmarking of spsolve function of scipy.sparse on linear algebra libraries used by scipy
 
 ## Some remarks on the sparse matrices used
 
