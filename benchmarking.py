@@ -55,8 +55,9 @@ def get_library_linked():
     print('you get the gist ;-)\n')
 
 def get_paths():
-    '''walk through the directory tree and get the paths to our matrices
-    we are in the "sparse_matrices" folder'''
+    '''walk through the directory tree and get the paths to our matrices.
+    We are in the "sparse_matrices" folder'''
+
     paths = []
     small = []
     medium = []
@@ -79,11 +80,13 @@ def get_paths():
     paths = [sorted(l) for l in [small, medium, large]]
     return paths
 
-
 def time_spsolve(mat_path, rpt, num):
     '''Dummy docstring'''
+
     # Preliminary steps for spsolve
-    # A and B should be global for timeit to see them
+    # A and B should be global for timeit to see them, since timeit only sees
+    # variables from __main__. It is possible to use lambda or partial, but this
+    # is simpler
     global A, B
     #import the sparse matrix from MatrixMarket format
     matmark = sio.mmread(mat_path)
@@ -119,6 +122,7 @@ from scipy.sparse.linalg import spsolve'''
 
 def main():
     '''Dummy docstring'''
+
     # Parse arguments
     parser = argparse.ArgumentParser(
         description='Minimal benchmarking on linear algebra libraries used by scipy')
@@ -136,19 +140,17 @@ def main():
     # Get the paths to the matrices
     paths = get_paths()
 
-    print('Number of executions per test: {}.'.format(number))
-    print('Number of test repetitions: {}.'.format(repeat))
+    print('Number of executions per test: {}'.format(number))
+    print('Number of test repetitions: {}'.format(repeat))
     print('Average time taken by spsolve in solving AX=B, for A:\n')
     print(
         'path\t\t\t {: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'
         .format('rows', 'columns', 'entries', 'format', 'field', 'symmetry'),
         '\t processing time')
     print('-'*117)
-    # We make the test for each folder
+    # We make the test for each matrix
     for mats_paths in paths:
         for mat_path in mats_paths:
-            # timeit only sees variables from __main__. It is possible to use
-            # lambda or partial, but this is simpler
             time_spsolve(mat_path, repeat, number)
 
 if __name__ == '__main__':
