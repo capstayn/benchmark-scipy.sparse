@@ -58,32 +58,25 @@ def get_paths():
     '''walk through the directory tree and get the paths to our matrices
     we are in the "sparse_matrices" folder'''
     paths = []
-    k1 = []
-    k5 = []
-    k10 = []
+    small = []
+    medium = []
+    large = []
 
-    for (dirpath, _, filenames) in os.walk("."):
+    for (dirpath, _, filenames) in os.walk('.'):
         for filename in filenames:
-            if filename.endswith('.mtx.gz') and dirpath == "./1k":
-                k1.append(os.sep.join([dirpath, filename]))
-            elif filename.endswith('.mtx.gz') and dirpath == "./5k":
-                k5.append(os.sep.join([dirpath, filename]))
-            elif filename.endswith('.mtx.gz') and dirpath == "./10k":
-                k10.append(os.sep.join([dirpath, filename]))
+            if filename.endswith('.mtx.gz') and dirpath == './1k':
+                small.append(os.sep.join([dirpath, filename]))
+            elif filename.endswith('.mtx.gz') and dirpath == './5k':
+                medium.append(os.sep.join([dirpath, filename]))
+            elif filename.endswith('.mtx.gz') and dirpath == './10k':
+                large.append(os.sep.join([dirpath, filename]))
             elif filename.endswith('.mtx.gz'):
                 print('WARNING: all .mtx matrices should be in either of\
                         {1k,5k,10k} folders')
                 print('Current working directory: {}'.format(os.getcwd()))
 
     # sort filenames alphabetically
-    k1.sort()
-    k5.sort()
-    k10.sort()
-
-    paths.append(list(k1))
-    paths.append(list(k5))
-    paths.append(list(k10))
-
+    paths = [sorted(l) for l in [small, medium, large]]
     return paths
 
 
@@ -154,9 +147,8 @@ def main():
     # We make the test for each folder
     for mats_paths in paths:
         for mat_path in mats_paths:
-            # timeit only sees variables from __main__, so I make glob_mat_path
-            # global. It is possible to use lambda or partial, but this is
-            # simpler
+            # timeit only sees variables from __main__. It is possible to use
+            # lambda or partial, but this is simpler
             time_spsolve(mat_path, repeat, number)
 
 if __name__ == '__main__':
