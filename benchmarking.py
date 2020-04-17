@@ -13,7 +13,6 @@ scipy.
  Date      - April 2020
 '''
 # system calls and interface
-import sys
 import os
 import argparse
 
@@ -102,18 +101,21 @@ def time_spsolve(mat_path, rpt, num):
     # Nice formatting
     info = sio.mminfo(mat_path)
     info_arr = np.array(info).flatten()
-    print(mat_path,'\t\t', "{: <8} {: <8} {: <10} {: <15} {: <8} {: <10}".format(*info_arr), end='\t')
+    print(
+        mat_path,'\t\t',
+        '{: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'.format(*info_arr),
+        end='\t')
 
     # Create an array with random values, to be used as B in the system AX=B
     B = sst.uniform.rvs(size=A.shape[0])
 
     # time spsolve with timeit
-    SETUP_CODE = "from __main__ import spsolve, glob_mat_path, A, B"
-    TEST_CODE = "spsolve(glob_mat_path, A, B)"
+    setup_code = 'from __main__ import spsolve, glob_mat_path, A, B'
+    test_code = 'spsolve(glob_mat_path, A, B)'
 
     # the number of executions <number> and times <repeat> these executions are
     # repeated can be configured.
-    bench = timeit.Timer(setup = SETUP_CODE, stmt = TEST_CODE)
+    bench = timeit.Timer(setup = setup_code, stmt = test_code)
     times = bench.repeat(repeat=rpt, number=num)
 
     # The most sensible value to show is the minimum result, since all the rest
@@ -122,12 +124,16 @@ def time_spsolve(mat_path, rpt, num):
     # corresponding to the minimum test by the number of executions per test.
     print(min(times)/num)
 
-def main(argv):
+def main():
+    '''Dummy docstring'''
 
     # Parse arguments
-    parser = argparse.ArgumentParser(description='Minimal benchmarking on linear algebra libraries used by scipy')
-    parser.add_argument('-n', help='Number of executions per test', required=True)
-    parser.add_argument('-r', help='Repetitions performed over a test',required=True)
+    parser = argparse.ArgumentParser(
+        description='Minimal benchmarking on linear algebra libraries used by scipy')
+    parser.add_argument(
+        '-n', help='Number of executions per test', required=True)
+    parser.add_argument(
+        '-r', help='Repetitions performed over a test', required=True)
     args = parser.parse_args()
     number = int(args.n)
     repeat = int(args.r)
@@ -138,12 +144,13 @@ def main(argv):
     # Get the paths to the matrices
     paths = get_paths()
 
-    print("Number of executions per test: {}.".format(number))
-    print("Number of test repetitions: {}.".format(repeat))
-    print("Average time taken by spsolve in solving AX=B, for A:\n")
-    print('path\t\t\t {: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'
-            .format("rows", "columns", "entries", "format", "field", "symmetry"),
-            '\t processing time')
+    print('Number of executions per test: {}.'.format(number))
+    print('Number of test repetitions: {}.'.format(repeat))
+    print('Average time taken by spsolve in solving AX=B, for A:\n')
+    print(
+        'path\t\t\t {: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'
+        .format('rows', 'columns', 'entries', 'format', 'field', 'symmetry'),
+        '\t processing time')
     print('----------------------------------------------------------------------------------------------------------------')
     # We make the test for each folder
     for mats_paths in paths:
@@ -155,4 +162,4 @@ def main(argv):
             glob_mat_path = mat_path
             time_spsolve(mat_path, repeat, number)
 
-main(sys.argv)
+main()
