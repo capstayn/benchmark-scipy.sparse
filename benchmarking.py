@@ -24,8 +24,8 @@ import contextlib
 import io
 
 # The packages to benchmark
-import scipy as sp
 import numpy as np
+import scipy as sp
 
 # scipy modules
 import scipy.sparse as ss
@@ -38,6 +38,7 @@ import scipy.stats as sst
 # 4. time the call spsolve
 
 def get_library_linked():
+    '''Print out info about scipy'''
 
     # capture into a variable show_config output
     capture = io.StringIO()
@@ -46,22 +47,22 @@ def get_library_linked():
     output = capture.getvalue()
 
     # look for library in use
-    lines = output.split("\n")
-    print ("scipy is using: ")
+    lines = output.split('\n')
+    print('scipy is using: ')
     for line in lines:
-        if "libraries" in line:
-            print ('{}'.format(line))
-    print ("you get the gist ;-)\n")
+        if 'libraries' in line:
+            print('{}'.format(line))
+    print('you get the gist ;-)\n')
 
 def get_paths():
-    # walk through the directory tree and get the paths to our matrices
-    # we are in the "sparse_matrices" folder
+    '''walk through the directory tree and get the paths to our matrices
+    we are in the "sparse_matrices" folder'''
     paths = []
     k1 = []
     k5 = []
     k10 = []
 
-    for (dirpath, dirnames, filenames) in os.walk("."):
+    for (dirpath, _, filenames) in os.walk("."):
         for filename in filenames:
             if filename.endswith('.mtx.gz') and dirpath == "./1k":
                 k1.append(os.sep.join([dirpath, filename]))
@@ -85,12 +86,9 @@ def get_paths():
 
     return paths
 
-def spsolve(path, A, B):
-    # Apply spsolve
-    ss.linalg.spsolve(A,B)
 
 def time_spsolve(mat_path, rpt, num):
-
+    '''Dummy docstring'''
     # Preliminary steps for spsolve
     # A and B should be global for timeit to see them
     global A, B
@@ -102,7 +100,8 @@ def time_spsolve(mat_path, rpt, num):
     info = sio.mminfo(mat_path)
     info_arr = np.array(info).flatten()
     print(
-        mat_path,'\t\t',
+        mat_path,
+        '\t\t',
         '{: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'.format(*info_arr),
         end='\t')
 
@@ -110,12 +109,13 @@ def time_spsolve(mat_path, rpt, num):
     B = sst.uniform.rvs(size=A.shape[0])
 
     # time spsolve with timeit
-    setup_code = 'from __main__ import spsolve, glob_mat_path, A, B'
-    test_code = 'spsolve(glob_mat_path, A, B)'
+    setup_code = '''from __main__ import A, B
+from scipy.sparse.linalg import spsolve'''
+    test_code = 'spsolve(A, B)'
 
     # the number of executions <number> and times <repeat> these executions are
     # repeated can be configured.
-    bench = timeit.Timer(setup = setup_code, stmt = test_code)
+    bench = timeit.Timer(setup=setup_code, stmt=test_code)
     times = bench.repeat(repeat=rpt, number=num)
 
     # The most sensible value to show is the minimum result, since all the rest
@@ -126,7 +126,6 @@ def time_spsolve(mat_path, rpt, num):
 
 def main():
     '''Dummy docstring'''
-
     # Parse arguments
     parser = argparse.ArgumentParser(
         description='Minimal benchmarking on linear algebra libraries used by scipy')
@@ -151,15 +150,14 @@ def main():
         'path\t\t\t {: <8} {: <8} {: <10} {: <15} {: <8} {: <10}'
         .format('rows', 'columns', 'entries', 'format', 'field', 'symmetry'),
         '\t processing time')
-    print('----------------------------------------------------------------------------------------------------------------')
+    print('-'*117)
     # We make the test for each folder
     for mats_paths in paths:
         for mat_path in mats_paths:
             # timeit only sees variables from __main__, so I make glob_mat_path
             # global. It is possible to use lambda or partial, but this is
             # simpler
-            global glob_mat_path
-            glob_mat_path = mat_path
             time_spsolve(mat_path, repeat, number)
 
-main()
+if __name__ == '__main__':
+    main()
